@@ -1,9 +1,11 @@
-let timeAccumulator = 0;
+const NATIONS = ["Solaria", "Drakmoor", "Wildlands"];
 
-// 1 real second = ~0.0833 in-game days (≈ 5 days per hour)
-const DAYS_PER_SECOND = 0.0833;
+function assignNation() {
+    return NATIONS[Math.floor(Math.random() * 2)];
+}
 
 function initWorld() {
+
     window.world = {
         year: 1,
         day: 1,
@@ -12,8 +14,14 @@ function initWorld() {
         wood: 500,
         stone: 250,
         gold: 100,
-        houses: 25,
-        population: 0
+        population: 0,
+
+        brain: {
+            aggression: 0,
+            stability: 100,
+            prosperity: 100,
+            fear: 0
+        }
     };
 }
 
@@ -27,78 +35,92 @@ function logEvent(text) {
     history.prepend(div);
 }
 
+// 🧠 CITIZEN AI
 function citizenAI(c) {
 
     c.hunger += 0.4;
 
-    // Job production
-    if (c.job === "Farmer") world.food += 0.6;
-    if (c.job === "Hunter") world.food += 0.4;
+    if (c.hunger > 80) c.health -= 0.5;
+
+    // job economy
+    if (c.job === "Farmer") world.food += 0.5;
+    if (c.job === "Hunter") world.food += 0.3;
     if (c.job === "Builder") world.wood += 0.3;
     if (c.job === "Miner") world.stone += 0.3;
     if (c.job === "Merchant") world.gold += 0.2;
 
-    // Hunger effects
-    if (c.hunger > 80) {
-        c.health -= 0.5;
-        c.happiness -= 0.3;
+    // nation influence
+    if (c.nation === "Drakmoor") {
+        world.brain.aggression += 0.0005;
     }
 
-    // Random small behaviors
-    if (Math.random() < 0.0005) {
-        c.happiness += 2;
-    }
-
-    if (Math.random() < 0.0003) {
-        logEvent(`${c.name} experienced a personal moment.`);
+    if (c.nation === "Solaria") {
+        world.brain.stability += 0.0003;
     }
 }
 
-function worldEvents() {
+// 🧠 WORLD BRAIN DECISION SYSTEM
+function worldBrain() {
+
+    const b = world.brain;
+
+    // Normalize values
+    b.stability = Math.max(0, Math.min(100, b.stability));
+    b.aggression = Math.max(0, Math.min(100, b.aggression));
 
     const roll = Math.random();
 
-    if (roll < 0.001) {
-        world.food -= 100;
-        logEvent("🐉 Dragon raid destroyed supplies!");
+    // WAR EVENT
+    if (b.aggression > 60 && roll < 0.002) {
+        const loss = Math.floor(Math.random() * 5) + 2;
+        citizens.splice(0, loss);
+        b.stability -= 10;
+
+        logEvent(`⚔️ WAR erupted between kingdoms! ${loss} citizens lost.`);
     }
 
-    if (roll >= 0.001 && roll < 0.0015) {
-        world.stone += 80;
-        logEvent("💎 Rich mineral discovery!");
+    // FAMINE EVENT
+    if (world.food < 200 && roll < 0.003) {
+        const loss = Math.floor(Math.random() * 3) + 1;
+        citizens.splice(0, loss);
+
+        logEvent(`🌾 Famine spreads across the land. ${loss} died.`);
     }
 
-    if (roll >= 0.0015 && roll < 0.002) {
+    // GOLDEN AGE
+    if (b.stability > 80 && roll < 0.002) {
+        world.gold += 50;
+        logEvent(`✨ A Golden Age begins. Prosperity rises.`);
+    }
+
+    // REBIRTH EVENT
+    if (roll < 0.002) {
         const name = names[Math.floor(Math.random() * names.length)];
-        citizens.push(createCitizen(citizens.length, name));
-        logEvent("👶 A new citizen was born.");
+        const c = createCitizen(citizens.length, name);
+        c.nation = assignNation();
+
+        citizens.push(c);
+
+        logEvent(`👶 A new citizen joins ${c.nation}.`);
     }
 }
 
+// 🧠 MAIN SIMULATION
 function advanceWorld(days) {
 
-    // Run citizen AI
     citizens.forEach(c => citizenAI(c));
 
-    // Consumption
-    world.food -= citizens.length * 0.15;
+    world.food -= citizens.length * 0.1;
 
-    // Starvation system
+    // starvation
     if (world.food < 0) {
         const deaths = Math.floor(Math.random() * 3) + 1;
-
-        for (let i = 0; i < deaths && citizens.length > 0; i++) {
-            citizens.pop();
-        }
-
+        citizens.splice(0, deaths);
         world.food = 0;
-        logEvent(`⚠️ Starvation! ${deaths} citizens died.`);
     }
 
-    // Events
-    worldEvents();
+    worldBrain();
 
-    // Time progression
     world.day += days;
 
     while (world.day > 365) {
@@ -113,7 +135,7 @@ function startSimulation() {
 
     setInterval(() => {
 
-        advanceWorld(DAYS_PER_SECOND);
+        advanceWorld(0.08); // real-time scaling
 
         updateUI();
         renderCitizens();
