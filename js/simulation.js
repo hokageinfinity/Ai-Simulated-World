@@ -1,15 +1,19 @@
+let timeAccumulator = 0;
+
+// 1 real second = ~0.0833 in-game days (≈ 5 days per hour)
+const DAYS_PER_SECOND = 0.0833;
+
 function initWorld() {
     window.world = {
         year: 1,
         day: 1,
 
-        population: citizens.length,
-
         food: 1000,
         wood: 500,
         stone: 250,
         gold: 100,
-        houses: 25
+        houses: 25,
+        population: 0
     };
 }
 
@@ -18,41 +22,72 @@ function logEvent(text) {
 
     const div = document.createElement("div");
     div.className = "log";
-    div.textContent = `Day ${world.day} | ${text}`;
+    div.textContent = `Y${world.year} D${Math.floor(world.day)} | ${text}`;
 
     history.prepend(div);
 }
 
-function simulateDay() {
+function citizenAI(c) {
 
-    // Basic consumption
-    world.food -= citizens.length;
+    c.hunger += 0.4;
 
-    // Production based on jobs
-    citizens.forEach(c => {
+    // Job production
+    if (c.job === "Farmer") world.food += 0.6;
+    if (c.job === "Hunter") world.food += 0.4;
+    if (c.job === "Builder") world.wood += 0.3;
+    if (c.job === "Miner") world.stone += 0.3;
+    if (c.job === "Merchant") world.gold += 0.2;
 
-        if (c.job === "Farmer") world.food += 3;
-        if (c.job === "Hunter") world.food += 2;
-        if (c.job === "Builder") world.wood += 2;
-        if (c.job === "Miner") world.stone += 2;
-        if (c.job === "Merchant") world.gold += 1;
+    // Hunger effects
+    if (c.hunger > 80) {
+        c.health -= 0.5;
+        c.happiness -= 0.3;
+    }
 
-        // small natural stat changes
-        c.happiness += (Math.random() * 2 - 1);
-        c.health += (Math.random() * 1 - 0.5);
+    // Random small behaviors
+    if (Math.random() < 0.0005) {
+        c.happiness += 2;
+    }
 
-        if (c.happiness > 100) c.happiness = 100;
-        if (c.happiness < 0) c.happiness = 0;
+    if (Math.random() < 0.0003) {
+        logEvent(`${c.name} experienced a personal moment.`);
+    }
+}
 
-        if (c.health > 100) c.health = 100;
-        if (c.health < 0) c.health = 0;
-    });
+function worldEvents() {
+
+    const roll = Math.random();
+
+    if (roll < 0.001) {
+        world.food -= 100;
+        logEvent("🐉 Dragon raid destroyed supplies!");
+    }
+
+    if (roll >= 0.001 && roll < 0.0015) {
+        world.stone += 80;
+        logEvent("💎 Rich mineral discovery!");
+    }
+
+    if (roll >= 0.0015 && roll < 0.002) {
+        const name = names[Math.floor(Math.random() * names.length)];
+        citizens.push(createCitizen(citizens.length, name));
+        logEvent("👶 A new citizen was born.");
+    }
+}
+
+function advanceWorld(days) {
+
+    // Run citizen AI
+    citizens.forEach(c => citizenAI(c));
+
+    // Consumption
+    world.food -= citizens.length * 0.15;
 
     // Starvation system
     if (world.food < 0) {
         const deaths = Math.floor(Math.random() * 3) + 1;
 
-        for (let i = 0; i < deaths; i++) {
+        for (let i = 0; i < deaths && citizens.length > 0; i++) {
             citizens.pop();
         }
 
@@ -60,43 +95,28 @@ function simulateDay() {
         logEvent(`⚠️ Starvation! ${deaths} citizens died.`);
     }
 
-    // Random births
-    if (Math.random() < 0.03) {
-        const name = names[Math.floor(Math.random() * names.length)];
-        const newId = citizens.length + 1;
+    // Events
+    worldEvents();
 
-        citizens.push(createCitizen(newId, name));
-        logEvent("👶 A child was born.");
-    }
+    // Time progression
+    world.day += days;
 
-    // Random world events
-    const eventRoll = Math.random();
-
-    if (eventRoll < 0.02) {
-        world.food -= 100;
-        logEvent("🐉 Dragon attack! Food destroyed.");
-    }
-
-    if (eventRoll >= 0.02 && eventRoll < 0.04) {
-        world.stone += 100;
-        logEvent("💎 Rich mineral discovery!");
-    }
-
-    if (eventRoll >= 0.04 && eventRoll < 0.06) {
-        world.population += 5;
-        logEvent("🧭 New travelers joined the village.");
-    }
-
-    // Advance time
-    world.day++;
-
-    if (world.day > 365) {
-        world.day = 1;
+    while (world.day > 365) {
+        world.day -= 365;
         world.year++;
     }
 
     world.population = citizens.length;
+}
 
-    updateUI();
-    renderCitizens();
+function startSimulation() {
+
+    setInterval(() => {
+
+        advanceWorld(DAYS_PER_SECOND);
+
+        updateUI();
+        renderCitizens();
+
+    }, 1000);
 }
