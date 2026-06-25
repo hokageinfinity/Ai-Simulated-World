@@ -7,12 +7,23 @@ function createCitizen(id, name) {
     return {
         id,
         name,
-        age: Math.floor(Math.random() * 40) + 18,
         job: jobs[Math.floor(Math.random() * jobs.length)],
 
-        hunger: Math.floor(Math.random() * 50),
-        happiness: 50 + Math.floor(Math.random() * 50),
-        health: 70 + Math.floor(Math.random() * 30)
+        hunger: 50,
+        health: 100,
+
+        // 🧠 EMOTIONS
+        happiness: 60,
+        fear: 10,
+        stress: 10,
+        trust: 50,
+
+        // 🤝 RELATIONSHIPS
+        relations: {},
+
+        // 📜 PERSONAL MEMORY
+        memories: [],
+        achievements: []
     };
 }
 
@@ -23,20 +34,18 @@ function generateCitizens(amount = 100) {
     }
 }
 
-function renderCitizens(filter = "") {
+function renderCitizens() {
+
     const list = document.getElementById("citizensList");
     list.innerHTML = "";
 
-    citizens
-        .filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
-        .slice(0, 80)
-        .forEach(c => {
+    citizens.forEach(c => {
 
-            list.innerHTML += `
-            <div class="citizen">
-                <b>${c.name}</b> (${c.job})<br>
-                Age:${c.age} | HP:${Math.floor(c.health)} | Happy:${Math.floor(c.happiness)} | Hunger:${Math.floor(c.hunger)}
-            </div>
-            `;
-        });
+        list.innerHTML += `
+        <div class="citizen" onclick="openCitizenProfile(${c.id})">
+            <b>${c.name}</b> (${c.job})<br>
+            ❤️ ${c.happiness} 😨 ${c.fear} ⚡ ${c.stress}
+        </div>
+        `;
+    });
 }
