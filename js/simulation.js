@@ -21,7 +21,6 @@ function initWorld() {
     };
 }
 
-// 📜 STORY ENGINE
 function writeStory(text) {
 
     const entry = `Y${world.year} D${Math.floor(world.day)} | ${text}`;
@@ -37,14 +36,11 @@ function writeStory(text) {
     historyDiv.prepend(div);
 }
 
-// 🧠 CITIZEN AI
 function citizenAI(c) {
 
     c.hunger += 0.4;
 
-    if (c.hunger > 85) {
-        c.health -= 0.6;
-    }
+    if (c.hunger > 85) c.health -= 0.6;
 
     switch (c.job) {
         case "Farmer": world.food += 0.5; break;
@@ -55,59 +51,41 @@ function citizenAI(c) {
     }
 }
 
-// 🧠 AI STORY BRAIN
 function storyBrain() {
 
     const b = world.brain;
     const roll = Math.random();
 
-    // WAR STORY
     if (b.aggression > 55 && roll < 0.002) {
-
         const lost = Math.floor(Math.random() * 5) + 2;
         citizens.splice(0, lost);
 
-        writeStory(
-            `⚔️ War erupted between kingdoms after rising tensions. ${lost} citizens were lost.`
-        );
+        writeStory(`⚔️ War erupted after rising tensions. ${lost} citizens were lost.`);
     }
 
-    // FAMINE STORY
     if (world.food < 200 && roll < 0.003) {
-
         const lost = Math.floor(Math.random() * 4) + 1;
         citizens.splice(0, lost);
 
-        writeStory(
-            `🌾 A devastating famine spreads across the land. ${lost} citizens perish from starvation.`
-        );
+        writeStory(`🌾 A famine spreads across the land. ${lost} citizens perish.`);
     }
 
-    // GOLDEN AGE STORY
     if (b.stability > 75 && roll < 0.002) {
-
         world.gold += 50;
 
-        writeStory(
-            `✨ A Golden Age begins as stability brings prosperity and peace.`
-        );
+        writeStory(`✨ A Golden Age brings prosperity and peace.`);
     }
 
-    // NEW CITIZEN STORY
     if (roll < 0.002) {
-
         const name = names[Math.floor(Math.random() * names.length)];
         const newCitizen = createCitizen(citizens.length, name);
 
         citizens.push(newCitizen);
 
-        writeStory(
-            `👶 ${name} joined the civilization, adding new life to the world.`
-        );
+        writeStory(`👶 ${name} joins the civilization.`);
     }
 }
 
-// 🌍 MAIN SIMULATION LOOP
 function advanceWorld(days) {
 
     citizens.forEach(c => citizenAI(c));
@@ -115,16 +93,13 @@ function advanceWorld(days) {
     world.food -= citizens.length * 0.1;
 
     if (world.food < 0) {
-
         const lost = Math.floor(Math.random() * 3) + 1;
         citizens.splice(0, lost);
 
         world.food = 0;
-
-        writeStory(`⚠️ Starvation crisis! ${lost} citizens died.`);
+        writeStory(`⚠️ Starvation crisis kills ${lost} citizens.`);
     }
 
-    // slow world drift
     world.brain.stability = Math.max(0, world.brain.stability + 0.01);
     world.brain.aggression = Math.min(100, world.brain.aggression + 0.01);
 
@@ -135,14 +110,12 @@ function advanceWorld(days) {
     while (world.day > 365) {
         world.day -= 365;
         world.year++;
-
-        writeStory(`📜 Year ${world.year} begins a new era in history.`);
+        writeStory(`📜 Year ${world.year} begins a new era.`);
     }
 
     world.population = citizens.length;
 }
 
-// ⏱ REAL TIME ENGINE
 function startSimulation() {
 
     setInterval(() => {
