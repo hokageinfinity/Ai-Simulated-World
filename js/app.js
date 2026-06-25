@@ -11,6 +11,23 @@ function updateUI() {
     document.getElementById("gold").textContent = Math.floor(world.gold);
 }
 
+function startGame() {
+
+    generateCitizens(100);
+    initWorld();
+
+    setupTabs();
+
+    updateUI();
+    renderCitizens();
+
+    writeStory("🌍 The world awakens into a new political era.");
+
+    startSimulation();
+}
+
+startGame();
+
 function setupTabs() {
 
     const buttons = document.querySelectorAll(".tabBtn");
