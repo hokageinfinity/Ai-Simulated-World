@@ -175,3 +175,69 @@ function startSimulation() {
 
     }, 1000);
 }
+function applyWorldPrompt(text) {
+
+    const t = text.toLowerCase();
+
+    writeStory(`🧠 Divine Influence: "${text}"`);
+
+    // 🌾 PLAGUE / DISEASE
+    if (t.includes("plague") || t.includes("disease")) {
+
+        const loss = Math.floor(Math.random() * 10) + 5;
+        citizens.splice(0, loss);
+
+        world.food -= 100;
+
+        writeStory(`☠️ A plague spreads across the land. ${loss} citizens perish.`);
+        world.tension += 20;
+    }
+
+    // ⚔️ WAR
+    if (t.includes("war") || t.includes("attack")) {
+
+        world.brain.aggression += 25;
+        world.tension += 30;
+
+        const loss = Math.floor(Math.random() * 6) + 2;
+        citizens.splice(0, loss);
+
+        writeStory(`⚔️ War erupts due to external influence. ${loss} lives lost.`);
+    }
+
+    // ✨ GOLDEN AGE
+    if (t.includes("golden age") || t.includes("peace")) {
+
+        world.brain.stability += 25;
+        world.gold += 100;
+
+        writeStory(`✨ A Golden Age begins under divine influence.`);
+    }
+
+    // 🔥 REBELLION
+    if (t.includes("rebellion") || t.includes("uprising")) {
+
+        world.tension += 40;
+
+        writeStory(`🔥 Rebellion spreads across kingdoms.`);
+    }
+
+    // 🐉 DRAGON EVENT
+    if (t.includes("dragon")) {
+
+        const loss = Math.floor(Math.random() * 5) + 3;
+        citizens.splice(0, loss);
+
+        world.food -= 150;
+
+        writeStory(`🐉 A massive dragon descends upon the world.`);
+    }
+
+    // 💰 RESOURCE BOOST
+    if (t.includes("wealth") || t.includes("gold")) {
+
+        world.gold += 200;
+
+        writeStory(`💰 Resources surge across the civilization.`);
+    }
+}
