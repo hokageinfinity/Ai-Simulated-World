@@ -1,190 +1,105 @@
-const world = {
+function updateUI() {
 
-year:1,
-day:1,
+    document.getElementById("year").textContent = world.year;
+    document.getElementById("day").textContent = world.day;
 
-population:50,
+    document.getElementById("population").textContent = citizens.length;
 
-food:500,
-wood:200,
-stone:100
-
-};
-
-const historyDiv =
-document.getElementById("history");
-
-function updateUI(){
-
-document.getElementById("year")
-.textContent = world.year;
-
-document.getElementById("day")
-.textContent = world.day;
-
-document.getElementById("population")
-.textContent = world.population;
-
-document.getElementById("food")
-.textContent = world.food;
-
-document.getElementById("wood")
-.textContent = world.wood;
-
-document.getElementById("stone")
-.textContent = world.stone;
-
+    document.getElementById("food").textContent = world.food;
+    document.getElementById("wood").textContent = world.wood;
+    document.getElementById("stone").textContent = world.stone;
+    document.getElementById("gold").textContent = world.gold;
+    document.getElementById("houses").textContent = world.houses;
 }
 
-function log(text){
+function setupTabs() {
+    const buttons = document.querySelectorAll(".tabBtn");
+    const tabs = document.querySelectorAll(".tab");
 
-const div =
-document.createElement("div");
+    buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
 
-div.className = "log";
+            buttons.forEach(b => b.classList.remove("active"));
+            tabs.forEach(t => t.classList.remove("active"));
 
-div.textContent = text;
+            btn.classList.add("active");
 
-historyDiv.prepend(div);
-
+            document.getElementById(btn.dataset.tab).classList.add("active");
+        });
+    });
 }
 
-function nextDay(){
+function createEvent() {
+    const input = document.getElementById("eventInput");
+    const text = input.value.trim();
 
-world.day++;
+    if (!text) return;
 
-if(world.day > 365){
+    logEvent("🌟 PLAYER EVENT: " + text);
 
-world.day = 1;
-world.year++;
+    const lower = text.toLowerCase();
 
+    if (lower.includes("dragon")) {
+        const deaths = Math.floor(Math.random() * 5) + 2;
+        for (let i = 0; i < deaths && citizens.length > 0; i++) {
+            citizens.pop();
+        }
+        world.food -= 100;
+        logEvent(`🐉 Dragon attack! ${deaths} citizens lost.`);
+    }
+
+    if (lower.includes("gold")) {
+        world.gold += 100;
+        logEvent("💰 Gold discovered in the land!");
+    }
+
+    if (lower.includes("meteor")) {
+        world.stone -= 80;
+        world.food -= 50;
+        logEvent("☄️ Meteor impact caused destruction!");
+    }
+
+    input.value = "";
+
+    updateUI();
+    renderCitizens();
 }
 
-const foodGathered =
-Math.floor(Math.random()*20)+10;
+function setupButtons() {
 
-const woodGathered =
-Math.floor(Math.random()*10)+5;
+    document.getElementById("nextDayBtn")
+        .addEventListener("click", simulateDay);
 
-const stoneGathered =
-Math.floor(Math.random()*8)+2;
+    document.getElementById("eventBtn")
+        .addEventListener("click", createEvent);
 
-world.food += foodGathered;
-world.wood += woodGathered;
-world.stone += stoneGathered;
+    document.getElementById("saveBtn")
+        .addEventListener("click", saveWorld);
 
-world.food -= world.population;
+    document.getElementById("loadBtn")
+        .addEventListener("click", loadWorld);
 
-if(world.food < 0){
+    document.getElementById("resetBtn")
+        .addEventListener("click", resetWorld);
 
-world.population -= 2;
-
-world.food = 0;
-
-log(
-"⚠️ Starvation! Population decreased."
-);
-
+    document.getElementById("citizenSearch")
+        .addEventListener("input", (e) => {
+            renderCitizens(e.target.value);
+        });
 }
 
-if(Math.random() < 0.05){
+function startGame() {
 
-world.population++;
+    generateCitizens(100);
+    initWorld();
 
-log(
-"👶 A child was born."
-);
+    setupTabs();
+    setupButtons();
 
+    updateUI();
+    renderCitizens();
+
+    logEvent("🌎 Civilization initialized.");
 }
 
-log(
-`Day ${world.day}: Gathered ${foodGathered} food, ${woodGathered} wood, ${stoneGathered} stone.`
-);
-
-updateUI();
-
-}
-
-function createEvent(){
-
-const input =
-document.getElementById("eventInput");
-
-const text =
-input.value.trim();
-
-if(text === "") return;
-
-log("🌟 EVENT: " + text);
-
-const lower =
-text.toLowerCase();
-
-if(lower.includes("dragon")){
-
-world.population -= 5;
-
-world.food -= 100;
-
-log(
-"🐉 Dragon attack! 5 citizens lost."
-);
-
-}
-
-if(lower.includes("gold")){
-
-world.stone += 100;
-
-log(
-"💰 Gold mine discovered."
-);
-
-}
-
-if(lower.includes("meteor")){
-
-world.population -= 10;
-
-world.wood -= 50;
-
-log(
-"☄️ Meteor impact!"
-);
-
-}
-
-if(world.population < 0)
-world.population = 0;
-
-if(world.food < 0)
-world.food = 0;
-
-if(world.wood < 0)
-world.wood = 0;
-
-updateUI();
-
-input.value = "";
-
-}
-
-document
-.getElementById("nextDayBtn")
-.addEventListener(
-"click",
-nextDay
-);
-
-document
-.getElementById("eventBtn")
-.addEventListener(
-"click",
-createEvent
-);
-
-updateUI();
-
-log(
-"🌎 World created successfully."
-);
+startGame();
