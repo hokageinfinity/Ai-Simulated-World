@@ -44,7 +44,20 @@ function setupTabs() {
         });
     });
 }
+function setupPromptSystem() {
 
+    const input = document.getElementById("worldPrompt");
+    const button = document.getElementById("applyPromptBtn");
+
+    button.onclick = () => {
+
+        if (!input.value.trim()) return;
+
+        applyWorldPrompt(input.value);
+
+        input.value = "";
+    };
+}
 function startGame() {
 
     generateCitizens(100);
