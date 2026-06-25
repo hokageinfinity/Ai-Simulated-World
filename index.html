@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hokage Infinity World V0.2</title>
+<title>Hokage Infinity World V0.5</title>
 
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -85,8 +85,6 @@
 
     </div>
 
-    </div>
-
     <div class="panel">
 
         <h2>Create World Event</h2>
@@ -132,11 +130,11 @@
     <div class="panel">
 
         <h2>World History</h2>
-        
-<div id="history" style="max-height:400px; overflow:auto;"></div>
-   
-    </div>
 
+        <!-- FIX: scroll-safe history container -->
+        <div id="history" style="max-height:400px; overflow:auto;"></div>
+
+    </div>
 
 </section>
 
@@ -148,17 +146,9 @@
 
         <h2>Save System</h2>
 
-        <button id="saveBtn">
-            Save World
-        </button>
-
-        <button id="loadBtn">
-            Load World
-        </button>
-
-        <button id="resetBtn">
-            Reset World
-        </button>
+        <button id="saveBtn">Save World</button>
+        <button id="loadBtn">Load World</button>
+        <button id="resetBtn">Reset World</button>
 
     </div>
 
