@@ -1,7 +1,7 @@
 const jobs = ["Farmer", "Hunter", "Builder", "Miner", "Merchant"];
 
 const citizens = [];
-window.citizens = citizens; // IMPORTANT: global access for simulation
+window.citizens = citizens;
 
 function createCitizen(id, name) {
     return {
