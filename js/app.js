@@ -1,18 +1,19 @@
 function updateUI() {
 
     document.getElementById("year").textContent = world.year;
-    document.getElementById("day").textContent = world.day;
+    document.getElementById("day").textContent = Math.floor(world.day);
 
     document.getElementById("population").textContent = citizens.length;
 
-    document.getElementById("food").textContent = world.food;
-    document.getElementById("wood").textContent = world.wood;
-    document.getElementById("stone").textContent = world.stone;
-    document.getElementById("gold").textContent = world.gold;
+    document.getElementById("food").textContent = Math.floor(world.food);
+    document.getElementById("wood").textContent = Math.floor(world.wood);
+    document.getElementById("stone").textContent = Math.floor(world.stone);
+    document.getElementById("gold").textContent = Math.floor(world.gold);
     document.getElementById("houses").textContent = world.houses;
 }
 
 function setupTabs() {
+
     const buttons = document.querySelectorAll(".tabBtn");
     const tabs = document.querySelectorAll(".tab");
 
@@ -23,69 +24,16 @@ function setupTabs() {
             tabs.forEach(t => t.classList.remove("active"));
 
             btn.classList.add("active");
-
             document.getElementById(btn.dataset.tab).classList.add("active");
         });
     });
 }
 
-function createEvent() {
-    const input = document.getElementById("eventInput");
-    const text = input.value.trim();
-
-    if (!text) return;
-
-    logEvent("🌟 PLAYER EVENT: " + text);
-
-    const lower = text.toLowerCase();
-
-    if (lower.includes("dragon")) {
-        const deaths = Math.floor(Math.random() * 5) + 2;
-        for (let i = 0; i < deaths && citizens.length > 0; i++) {
-            citizens.pop();
-        }
-        world.food -= 100;
-        logEvent(`🐉 Dragon attack! ${deaths} citizens lost.`);
-    }
-
-    if (lower.includes("gold")) {
-        world.gold += 100;
-        logEvent("💰 Gold discovered in the land!");
-    }
-
-    if (lower.includes("meteor")) {
-        world.stone -= 80;
-        world.food -= 50;
-        logEvent("☄️ Meteor impact caused destruction!");
-    }
-
-    input.value = "";
-
-    updateUI();
-    renderCitizens();
-}
-
 function setupButtons() {
 
-    document.getElementById("nextDayBtn")
-        .addEventListener("click", simulateDay);
-
-    document.getElementById("eventBtn")
-        .addEventListener("click", createEvent);
-
-    document.getElementById("saveBtn")
-        .addEventListener("click", saveWorld);
-
-    document.getElementById("loadBtn")
-        .addEventListener("click", loadWorld);
-
-    document.getElementById("resetBtn")
-        .addEventListener("click", resetWorld);
-
-    document.getElementById("citizenSearch")
-        .addEventListener("input", (e) => {
-            renderCitizens(e.target.value);
-        });
+    document.getElementById("saveBtn").onclick = saveWorld;
+    document.getElementById("loadBtn").onclick = loadWorld;
+    document.getElementById("resetBtn").onclick = resetWorld;
 }
 
 function startGame() {
@@ -99,7 +47,9 @@ function startGame() {
     updateUI();
     renderCitizens();
 
-    logEvent("🌎 Civilization initialized.");
+    logEvent("🌍 V0.3 Real-Time Civilization Started");
+
+    startSimulation(); // 🔥 AUTO RUNS WORLD
 }
 
 startGame();
