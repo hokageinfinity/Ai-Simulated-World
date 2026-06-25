@@ -10,6 +10,7 @@ function updateUI() {
     document.getElementById("stone").textContent = Math.floor(world.stone);
     document.getElementById("gold").textContent = Math.floor(world.gold);
 }
+
 function setupTabs() {
 
     const buttons = document.querySelectorAll(".tabBtn");
@@ -27,27 +28,19 @@ function setupTabs() {
     });
 }
 
-function setupButtons() {
-
-    document.getElementById("saveBtn").onclick = saveWorld;
-    document.getElementById("loadBtn").onclick = loadWorld;
-    document.getElementById("resetBtn").onclick = resetWorld;
-}
-
 function startGame() {
 
     generateCitizens(100);
     initWorld();
 
     setupTabs();
-    setupButtons();
 
     updateUI();
     renderCitizens();
 
-    logEvent("🌍 V0.3 Real-Time Civilization Started");
+    writeStory("🌍 The civilization awakens into a new age of existence.");
 
-    startSimulation(); // 🔥 AUTO RUNS WORLD
+    startSimulation();
 }
 
 startGame();
