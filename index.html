@@ -1,68 +1,185 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hokage Infinity World</title>
+<title>Hokage Infinity World V0.2</title>
 
 <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<h1>🌎 Hokage Infinity World</h1>
+<header>
+    <h1>🌎 Hokage Infinity World</h1>
+    <p>Living Civilization Simulator</p>
+</header>
 
-<div class="panel">
+<nav class="tabs">
 
-<h2>World Status</h2>
+    <button class="tabBtn active" data-tab="worldTab">
+        World
+    </button>
 
-<p>Year: <span id="year">1</span></p>
-<p>Day: <span id="day">1</span></p>
+    <button class="tabBtn" data-tab="citizensTab">
+        Citizens
+    </button>
 
-<p>Population: <span id="population">50</span></p>
+    <button class="tabBtn" data-tab="historyTab">
+        History
+    </button>
 
-<p>Food: <span id="food">500</span></p>
+    <button class="tabBtn" data-tab="settingsTab">
+        Settings
+    </button>
 
-<p>Wood: <span id="wood">200</span></p>
+</nav>
 
-<p>Stone: <span id="stone">100</span></p>
+<!-- WORLD TAB -->
 
-</div>
+<section id="worldTab" class="tab active">
 
-<div class="panel">
+    <div class="panel">
 
-<h2>World Controls</h2>
+        <h2>World Status</h2>
 
-<button id="nextDayBtn">
-Advance One Day
-</button>
+        <div class="statGrid">
 
-</div>
+            <div class="statCard">
+                <span>Year</span>
+                <h3 id="year">1</h3>
+            </div>
 
-<div class="panel">
+            <div class="statCard">
+                <span>Day</span>
+                <h3 id="day">1</h3>
+            </div>
 
-<h2>Create Event</h2>
+            <div class="statCard">
+                <span>Population</span>
+                <h3 id="population">100</h3>
+            </div>
 
-<input
-id="eventInput"
-placeholder="A dragon attacks..."
->
+            <div class="statCard">
+                <span>Food</span>
+                <h3 id="food">1000</h3>
+            </div>
 
-<button id="eventBtn">
-Create Event
-</button>
+            <div class="statCard">
+                <span>Wood</span>
+                <h3 id="wood">500</h3>
+            </div>
 
-</div>
+            <div class="statCard">
+                <span>Stone</span>
+                <h3 id="stone">250</h3>
+            </div>
 
-<div class="panel">
+            <div class="statCard">
+                <span>Gold</span>
+                <h3 id="gold">100</h3>
+            </div>
 
-<h2>World History</h2>
+            <div class="statCard">
+                <span>Houses</span>
+                <h3 id="houses">25</h3>
+            </div>
 
-<div id="history"></div>
+        </div>
 
-</div>
+    </div>
 
+    <div class="panel">
+
+        <h2>Simulation Controls</h2>
+
+        <button id="nextDayBtn">
+            Advance One Day
+        </button>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>Create World Event</h2>
+
+        <input
+        type="text"
+        id="eventInput"
+        placeholder="A dragon attacks the village..."
+        >
+
+        <button id="eventBtn">
+            Create Event
+        </button>
+
+    </div>
+
+</section>
+
+<!-- CITIZENS TAB -->
+
+<section id="citizensTab" class="tab">
+
+    <div class="panel">
+
+        <h2>Citizens</h2>
+
+        <input
+        type="text"
+        id="citizenSearch"
+        placeholder="Search citizens..."
+        >
+
+        <div id="citizensList"></div>
+
+    </div>
+
+</section>
+
+<!-- HISTORY TAB -->
+
+<section id="historyTab" class="tab">
+
+    <div class="panel">
+
+        <h2>World History</h2>
+
+        <div id="history"></div>
+
+    </div>
+
+</section>
+
+<!-- SETTINGS TAB -->
+
+<section id="settingsTab" class="tab">
+
+    <div class="panel">
+
+        <h2>Save System</h2>
+
+        <button id="saveBtn">
+            Save World
+        </button>
+
+        <button id="loadBtn">
+            Load World
+        </button>
+
+        <button id="resetBtn">
+            Reset World
+        </button>
+
+    </div>
+
+</section>
+
+<script src="data/names.js"></script>
+<script src="js/citizens.js"></script>
+<script src="js/simulation.js"></script>
+<script src="js/save.js"></script>
 <script src="js/app.js"></script>
 
 </body>
