@@ -1,41 +1,138 @@
-body{
-background:#111;
-color:white;
-font-family:Arial,sans-serif;
-padding:20px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-h1{
-text-align:center;
+body {
+    font-family: Arial, sans-serif;
+    background: #0f1115;
+    color: #ffffff;
+    padding: 12px;
 }
 
-.panel{
-background:#222;
-padding:15px;
-margin-bottom:15px;
-border-radius:10px;
+/* Header */
+header {
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-button{
-width:100%;
-padding:12px;
-font-size:18px;
-margin-top:10px;
+header h1 {
+    font-size: 24px;
 }
 
-input{
-width:100%;
-padding:12px;
-font-size:18px;
-box-sizing:border-box;
+header p {
+    font-size: 12px;
+    opacity: 0.7;
 }
 
-#history{
-max-height:400px;
-overflow-y:auto;
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
 }
 
-.log{
-padding:8px;
-border-bottom:1px solid #444;
+.tabBtn {
+    flex: 1;
+    padding: 10px;
+    background: #1b1f2a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.tabBtn.active {
+    background: #3b82f6;
+}
+
+/* Panels */
+.panel {
+    background: #161a22;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Tabs Sections */
+.tab {
+    display: none;
+}
+
+.tab.active {
+    display: block;
+}
+
+/* Stats Grid */
+.statGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.statCard {
+    background: #0f1115;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.statCard span {
+    font-size: 10px;
+    opacity: 0.7;
+}
+
+.statCard h3 {
+    font-size: 18px;
+    margin-top: 4px;
+}
+
+/* Buttons */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 8px;
+    background: #3b82f6;
+    color: white;
+    font-size: 14px;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 8px;
+    border: none;
+    background: #0f1115;
+    color: white;
+}
+
+/* Citizens list */
+#citizensList {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.citizen {
+    padding: 6px;
+    border-bottom: 1px solid #2a2f3a;
+    font-size: 12px;
+}
+
+/* History log */
+#history {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.log {
+    font-size: 12px;
+    padding: 6px;
+    border-bottom: 1px solid #2a2f3a;
+    opacity: 0.9;
 }
