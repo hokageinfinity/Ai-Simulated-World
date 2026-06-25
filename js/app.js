@@ -9,9 +9,7 @@ function updateUI() {
     document.getElementById("wood").textContent = Math.floor(world.wood);
     document.getElementById("stone").textContent = Math.floor(world.stone);
     document.getElementById("gold").textContent = Math.floor(world.gold);
-    document.getElementById("houses").textContent = world.houses;
 }
-
 function setupTabs() {
 
     const buttons = document.querySelectorAll(".tabBtn");
