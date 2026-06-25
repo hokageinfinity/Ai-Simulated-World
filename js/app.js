@@ -24,6 +24,7 @@ function startGame() {
     writeStory("🌍 The world awakens into a new political era.");
 
     startSimulation();
+setupPromptSystem();
 }
 
 startGame();
