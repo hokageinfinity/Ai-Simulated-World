@@ -1,25 +1,21 @@
-const jobs = [
-    "Hunter",
-    "Farmer",
-    "Builder",
-    "Miner",
-    "Merchant"
-];
+const jobs = ["Farmer", "Hunter", "Builder", "Miner", "Merchant"];
 
 const citizens = [];
+window.citizens = citizens; // IMPORTANT: global access for simulation
 
 function createCitizen(id, name) {
     return {
-        id: id,
-        name: name,
+        id,
+        name,
         age: Math.floor(Math.random() * 40) + 18,
         job: jobs[Math.floor(Math.random() * jobs.length)],
+
+        hunger: Math.floor(Math.random() * 50),
         happiness: 50 + Math.floor(Math.random() * 50),
         health: 70 + Math.floor(Math.random() * 30)
     };
 }
 
-// Generate starting population
 function generateCitizens(amount = 100) {
     for (let i = 0; i < amount; i++) {
         const name = names[Math.floor(Math.random() * names.length)];
@@ -27,21 +23,20 @@ function generateCitizens(amount = 100) {
     }
 }
 
-// Render citizens in UI
 function renderCitizens(filter = "") {
     const list = document.getElementById("citizensList");
     list.innerHTML = "";
 
     citizens
         .filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
-        .slice(0, 50)
+        .slice(0, 80)
         .forEach(c => {
-            const div = document.createElement("div");
-            div.className = "citizen";
 
-            div.textContent =
-                `${c.name} | ${c.job} | Age ${c.age} | HP ${c.health} | Happy ${c.happiness}`;
-
-            list.appendChild(div);
+            list.innerHTML += `
+            <div class="citizen">
+                <b>${c.name}</b> (${c.job})<br>
+                Age:${c.age} | HP:${Math.floor(c.health)} | Happy:${Math.floor(c.happiness)} | Hunger:${Math.floor(c.hunger)}
+            </div>
+            `;
         });
 }
