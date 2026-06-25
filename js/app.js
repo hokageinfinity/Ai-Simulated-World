@@ -38,7 +38,7 @@ function startGame() {
     updateUI();
     renderCitizens();
 
-    writeStory("🌍 The civilization awakens into a new age of existence.");
+    writeStory("🌍 Civilization awakens.");
 
     startSimulation();
 }
