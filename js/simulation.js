@@ -1,9 +1,3 @@
-const NATIONS = ["Solaria", "Drakmoor", "Wildlands"];
-
-function assignNation() {
-    return NATIONS[Math.floor(Math.random() * 2)];
-}
-
 function initWorld() {
 
     window.world = {
@@ -17,22 +11,30 @@ function initWorld() {
         population: 0,
 
         brain: {
-            aggression: 0,
-            stability: 100,
-            prosperity: 100,
-            fear: 0
-        }
+            stability: 80,
+            aggression: 20,
+            fear: 10,
+            prosperity: 60
+        },
+
+        history: []
     };
 }
 
-function logEvent(text) {
-    const history = document.getElementById("history");
+// 📜 STORY ENGINE
+function writeStory(text) {
+
+    const entry = `Y${world.year} D${Math.floor(world.day)} | ${text}`;
+
+    world.history.unshift(entry);
+
+    const historyDiv = document.getElementById("history");
 
     const div = document.createElement("div");
     div.className = "log";
-    div.textContent = `Y${world.year} D${Math.floor(world.day)} | ${text}`;
+    div.textContent = entry;
 
-    history.prepend(div);
+    historyDiv.prepend(div);
 }
 
 // 🧠 CITIZEN AI
@@ -40,102 +42,112 @@ function citizenAI(c) {
 
     c.hunger += 0.4;
 
-    if (c.hunger > 80) c.health -= 0.5;
-
-    // job economy
-    if (c.job === "Farmer") world.food += 0.5;
-    if (c.job === "Hunter") world.food += 0.3;
-    if (c.job === "Builder") world.wood += 0.3;
-    if (c.job === "Miner") world.stone += 0.3;
-    if (c.job === "Merchant") world.gold += 0.2;
-
-    // nation influence
-    if (c.nation === "Drakmoor") {
-        world.brain.aggression += 0.0005;
+    if (c.hunger > 85) {
+        c.health -= 0.6;
     }
 
-    if (c.nation === "Solaria") {
-        world.brain.stability += 0.0003;
+    switch (c.job) {
+        case "Farmer": world.food += 0.5; break;
+        case "Hunter": world.food += 0.3; break;
+        case "Builder": world.wood += 0.3; break;
+        case "Miner": world.stone += 0.3; break;
+        case "Merchant": world.gold += 0.2; break;
     }
 }
 
-// 🧠 WORLD BRAIN DECISION SYSTEM
-function worldBrain() {
+// 🧠 AI STORY BRAIN
+function storyBrain() {
 
     const b = world.brain;
-
-    // Normalize values
-    b.stability = Math.max(0, Math.min(100, b.stability));
-    b.aggression = Math.max(0, Math.min(100, b.aggression));
-
     const roll = Math.random();
 
-    // WAR EVENT
-    if (b.aggression > 60 && roll < 0.002) {
-        const loss = Math.floor(Math.random() * 5) + 2;
-        citizens.splice(0, loss);
-        b.stability -= 10;
+    // WAR STORY
+    if (b.aggression > 55 && roll < 0.002) {
 
-        logEvent(`⚔️ WAR erupted between kingdoms! ${loss} citizens lost.`);
+        const lost = Math.floor(Math.random() * 5) + 2;
+        citizens.splice(0, lost);
+
+        writeStory(
+            `⚔️ War erupted between kingdoms after rising tensions. ${lost} citizens were lost.`
+        );
     }
 
-    // FAMINE EVENT
+    // FAMINE STORY
     if (world.food < 200 && roll < 0.003) {
-        const loss = Math.floor(Math.random() * 3) + 1;
-        citizens.splice(0, loss);
 
-        logEvent(`🌾 Famine spreads across the land. ${loss} died.`);
+        const lost = Math.floor(Math.random() * 4) + 1;
+        citizens.splice(0, lost);
+
+        writeStory(
+            `🌾 A devastating famine spreads across the land. ${lost} citizens perish from starvation.`
+        );
     }
 
-    // GOLDEN AGE
-    if (b.stability > 80 && roll < 0.002) {
+    // GOLDEN AGE STORY
+    if (b.stability > 75 && roll < 0.002) {
+
         world.gold += 50;
-        logEvent(`✨ A Golden Age begins. Prosperity rises.`);
+
+        writeStory(
+            `✨ A Golden Age begins as stability brings prosperity and peace.`
+        );
     }
 
-    // REBIRTH EVENT
+    // NEW CITIZEN STORY
     if (roll < 0.002) {
+
         const name = names[Math.floor(Math.random() * names.length)];
-        const c = createCitizen(citizens.length, name);
-        c.nation = assignNation();
+        const newCitizen = createCitizen(citizens.length, name);
 
-        citizens.push(c);
+        citizens.push(newCitizen);
 
-        logEvent(`👶 A new citizen joins ${c.nation}.`);
+        writeStory(
+            `👶 ${name} joined the civilization, adding new life to the world.`
+        );
     }
 }
 
-// 🧠 MAIN SIMULATION
+// 🌍 MAIN SIMULATION LOOP
 function advanceWorld(days) {
 
     citizens.forEach(c => citizenAI(c));
 
     world.food -= citizens.length * 0.1;
 
-    // starvation
     if (world.food < 0) {
-        const deaths = Math.floor(Math.random() * 3) + 1;
-        citizens.splice(0, deaths);
+
+        const lost = Math.floor(Math.random() * 3) + 1;
+        citizens.splice(0, lost);
+
         world.food = 0;
+
+        writeStory(`⚠️ Starvation crisis! ${lost} citizens died.`);
     }
 
-    worldBrain();
+    // slow world drift
+    world.brain.stability = Math.max(0, world.brain.stability + 0.01);
+    world.brain.aggression = Math.min(100, world.brain.aggression + 0.01);
+
+    storyBrain();
 
     world.day += days;
 
     while (world.day > 365) {
         world.day -= 365;
         world.year++;
+
+        writeStory(`📜 Year ${world.year} begins a new era in history.`);
     }
 
     world.population = citizens.length;
 }
 
+// ⏱ REAL TIME ENGINE
 function startSimulation() {
 
     setInterval(() => {
 
-        advanceWorld(0.08); // real-time scaling
+        advanceWorld(0.08);
 
         updateUI();
         renderCitizens();
